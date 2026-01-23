@@ -24,10 +24,11 @@ $RepoUrl = "https://raw.githubusercontent.com/GabrielGit25/caixa-ferramentas/mai
 
 while ($true) {
     Clear-Host
-    Write-Host "🔥 CAIXA-FERRAMENTAS v2.6" -ForegroundColor Magenta
+    Write-Host "🔥 CAIXA DE FERRAMENTAS v2.6" -ForegroundColor Magenta
     Write-Host "═══════════════════════════════════════" -ForegroundColor Gray
     Write-Host "  [1] 🔐 Ativação Office (MAS)" -ForegroundColor Green
     Write-Host "  [2] 🌐 Correção Rede (net-fix)" -ForegroundColor Green
+    Write-Host "  [3] 🌐  Correção Rede Ultra: para problemas mais complexos (net-ultra)" -ForegroundColor Green     
     Write-Host "  [0] ❌ Sair" -ForegroundColor Red
     Write-Host "═══════════════════════════════════════" -ForegroundColor Gray
     
@@ -48,6 +49,11 @@ while ($true) {
             Write-Host "❌ net-fix.ps1 não encontrado!" -ForegroundColor Red
         }
     }
+    elseif ($choice -eq "3") {          
+    Clear-Host
+    Write-Host "🚀 LIMPEZA DISCO..." -ForegroundColor Yellow
+    irm "$RepoUrl/limpeza-disco.ps1" | iex
+}
     elseif ($choice -eq "0") {
         Write-Host "`n👋 Até logo! (cf)" -ForegroundColor Cyan
         break
@@ -57,7 +63,7 @@ while ($true) {
         Start-Sleep 1
     }
     
-    if ($choice -in "12") {
+    if ($choice -in "123") {
         Write-Host "`n✅ ENTER para MENU principal..." -ForegroundColor Green
         Read-Host | Out-Null
     }
