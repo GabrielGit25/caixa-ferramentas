@@ -1,7 +1,18 @@
 {
   "menu": [
-    {"Id": 1, "Name": "🔐 Ativação Office", "Script": "ativa-office.ps1"},
-    {"Id": 2, "Name": "🌐 Correção Rede", "Script": "net-fix.ps1"},
-    {"Id": 0, "Name": "❌ Sair"}
+    {
+      "Id": 1,
+      "Name": "🔐 Ativação Office",
+      "Script": "ativa-office.ps1"
+    },
+    {
+      "Id": 2,
+      "Name": "🌐 Correção Rede",
+      "Script": "net-fix.ps1"
+    },
+    {
+      "Id": 0,
+      "Name": "❌ Sair"
+    }
   ]
 }
