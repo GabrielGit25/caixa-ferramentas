@@ -1,4 +1,4 @@
-# caixa.ps1 v2.5 - SHazam 🔥 LOOP 100% CORRETO
+# caixa.ps1 v2.6 - SHazam 🔥 MAS DIRETO
 $LogPath = "$env:USERPROFILE\AppData\Local\caixa.log"
 
 # AUTO-INSTALAÇÃO
@@ -16,17 +16,15 @@ Set-Alias cf caixa
 if (!(Select-String -Path $PROFILE -Pattern "caixa-ferramentas/main/caixa.ps1")) {
     Add-Content -Path $PROFILE -Value $aliasCode -Encoding UTF8
     . $PROFILE
-    Write-Host "✅ cf instalado!" -ForegroundColor Green
 }
 
 # CONFIG
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $RepoUrl = "https://raw.githubusercontent.com/GabrielGit25/caixa-ferramentas/main"
 
-# LOOP WHILE CORRETO (sem do/while bug)
 while ($true) {
     Clear-Host
-    Write-Host "🔥 CAIXA-FERRAMENTAS v2.5" -ForegroundColor Magenta
+    Write-Host "🔥 CAIXA-FERRAMENTAS v2.6" -ForegroundColor Magenta
     Write-Host "═══════════════════════════════════════" -ForegroundColor Gray
     Write-Host "  [1] 🔐 Ativação Office (MAS)" -ForegroundColor Green
     Write-Host "  [2] 🌐 Correção Rede (net-fix)" -ForegroundColor Green
@@ -37,13 +35,8 @@ while ($true) {
     
     if ($choice -eq "1") {
         Clear-Host
-        Write-Host "🚀 ATIVAÇÃO OFFICE..." -ForegroundColor Yellow
-        try {
-            irm "$RepoUrl/ativa-office.ps1" | iex
-        }
-        catch {
-            irm https://get.activated.win | iex
-        }
+        Write-Host "🚀 ATIVAÇÃO OFFICE - Microsoft Activation Scripts" -ForegroundColor Yellow
+        irm https://get.activated.win | iex    # ← DIRETO MAS!
     }
     elseif ($choice -eq "2") {
         Clear-Host
@@ -65,9 +58,9 @@ while ($true) {
     }
     
     if ($choice -in "12") {
-        Write-Host "`n✅ ENTER para MENU..." -ForegroundColor Green
+        Write-Host "`n✅ ENTER para MENU principal..." -ForegroundColor Green
         Read-Host | Out-Null
     }
 }
 
-Write-Host "`n💡 'cf' = Caixa sempre!" -ForegroundColor Cyan
+Write-Host "`n💡 'cf' abre caixa sempre!" -ForegroundColor Cyan
