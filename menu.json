@@ -11,6 +11,11 @@
       "Script": "net-fix.ps1"
     },
     {
+      "Id": 3,
+      "Name": "🌐 Correção Rede Ultra",
+      "Script": "net-ultra.ps1"
+    },
+    {
       "Id": 0,
       "Name": "❌ Sair"
     }
