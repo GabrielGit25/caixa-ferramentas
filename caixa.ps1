@@ -49,11 +49,17 @@ while ($true) {
             Write-Host "❌ net-fix.ps1 não encontrado!" -ForegroundColor Red
         }
     }
-    elseif ($choice -eq "3") {          
+   elseif ($choice -eq "3") {
     Clear-Host
-    Write-Host "🚀 LIMPEZA DISCO..." -ForegroundColor Yellow
-    irm "$RepoUrl/limpeza-disco.ps1" | iex
+    Write-Host "🚀 CORREÇÃO REDE ULTRA..." -ForegroundColor Yellow
+    try {
+        irm "$RepoUrl/net-ultra.ps1" | iex
+    }
+    catch {
+        Write-Host "❌ net-ultra.ps1 não encontrado!" -ForegroundColor Red
+    }
 }
+
     elseif ($choice -eq "0") {
         Write-Host "`n👋 Até logo! (cf)" -ForegroundColor Cyan
         break
