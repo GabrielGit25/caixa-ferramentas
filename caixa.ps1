@@ -1,7 +1,7 @@
-# caixa.ps1 v2.8 - SHazam 🔥 LÊ menu.json AUTOMATICAMENTE!
+# caixa.ps1 v2.8.1 - SHazam 🔥 PS5.1 + JSON
 $RepoUrl = "https://raw.githubusercontent.com/GabrielGit25/caixa-ferramentas/main"
 
-# AUTO-INSTALAÇÃO (igual)
+# AUTO-INSTALAÇÃO
 if (!(Test-Path $PROFILE)) { New-Item -Path $PROFILE -ItemType File -Force | Out-Null }
 $aliasCode = @"
 function caixa { irm "$RepoUrl/caixa.ps1" | iex }
@@ -15,13 +15,15 @@ if (!(Select-String -Path $PROFILE -Pattern "caixa-ferramentas/main/caixa.ps1"))
 
 while ($true) {
     Clear-Host
-    Write-Host "🔥 CAIXA-FERRAMENTAS v2.8 - JSON" -ForegroundColor Magenta
+    Write-Host "🔥 CAIXA-FERRAMENTAS v2.8.1 - Lê menu.json" -ForegroundColor Magenta
     
-    # LÊ menu.json ou fallback
+    # LÊ menu.json (com fallback PS5.1)
     try {
-        $menu = irm "$RepoUrl/menu.json" | ConvertFrom-Json
+        $json = irm "$RepoUrl/menu.json"
+        $menu = $json | ConvertFrom-Json
     }
     catch {
+        Write-Host "⚠️ menu.json indisponível - menu fixo" -ForegroundColor Yellow
         $menu = @{menu = @(
             @{Id=1;Name="🔐 Ativação Office";Script="https://get.activated.win"}
             @{Id=2;Name="🌐 Correção Rede";Script="net-fix.ps1"}
@@ -37,7 +39,9 @@ while ($true) {
     }
     Write-Host "═══════════════════════════════════════" -ForegroundColor Gray
     
-    $choice = Read-Host "`n👉 [$($menu.menu | ? Id -ne 0 | % Id | join ',')]"
+    # PS5.1 COMPATÍVEL - sem 'join'
+    $opcoes = ($menu.menu | ? {$_.Id -ne 0} | % {$_.Id}) -join ','
+    $choice = Read-Host "`n👉 [$opcoes]"
     
     $selected = $menu.menu | ? Id -eq [int]$choice
     if ($selected -and $selected.Id -ne 0) {
@@ -47,13 +51,21 @@ while ($true) {
             if ($selected.Script -match '^http') { irm $selected.Script | iex }
             else { irm "$RepoUrl/$($selected.Script)" | iex }
         }
-        catch { Write-Host "❌ $($selected.Script) falhou!" -ForegroundColor Red }
+        catch { 
+            Write-Host "❌ $($selected.Script) falhou!" -ForegroundColor Red 
+        }
     }
-    elseif ($choice -eq "0") { break }
-    else { Write-Host "❌ Inválido!" -ForegroundColor Red; Start-Sleep 1 }
+    elseif ($choice -eq "0") { 
+        Write-Host "`n👋 Até logo! (cf)" -ForegroundColor Cyan
+        break 
+    }
+    else { 
+        Write-Host "❌ Opção inválida!" -ForegroundColor Red
+        Start-Sleep 1 
+    }
     
     Write-Host "`n✅ ENTER para menu..." -ForegroundColor Green
     Read-Host | Out-Null
 }
 
-Write-Host "💡 cf = sempre!" -ForegroundColor Cyan
+Write-Host "💡 cf funciona sempre!" -ForegroundColor Cyan
