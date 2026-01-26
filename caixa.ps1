@@ -1,71 +1,59 @@
-# caixa.ps1 v2.6 - SHazam 🔥 MAS DIRETO
-$LogPath = "$env:USERPROFILE\AppData\Local\caixa.log"
-
-# AUTO-INSTALAÇÃO
-if (!(Test-Path $PROFILE)) { 
-    New-Item -Path $PROFILE -ItemType File -Force | Out-Null 
-}
-
-$aliasCode = @"
-function caixa {
-    irm https://raw.githubusercontent.com/GabrielGit25/caixa-ferramentas/main/caixa.ps1 | iex
-}
-Set-Alias cf caixa
-"@
-
-if (!(Select-String -Path $PROFILE -Pattern "caixa-ferramentas/main/caixa.ps1")) {
-    Add-Content -Path $PROFILE -Value $aliasCode -Encoding UTF8
-    . $PROFILE
-}
-
-# CONFIG
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+# caixa.ps1 v2.8 - SHazam 🔥 LÊ menu.json AUTOMATICAMENTE!
 $RepoUrl = "https://raw.githubusercontent.com/GabrielGit25/caixa-ferramentas/main"
 
+# AUTO-INSTALAÇÃO (igual)
+if (!(Test-Path $PROFILE)) { New-Item -Path $PROFILE -ItemType File -Force | Out-Null }
+$aliasCode = @"
+function caixa { irm "$RepoUrl/caixa.ps1" | iex }
+Set-Alias cf caixa
+"@
+if (!(Select-String -Path $PROFILE -Pattern "caixa-ferramentas/main/caixa.ps1")) {
+    Add-Content -Path $PROFILE -Value $aliasCode -Encoding UTF8; . $PROFILE
+}
+
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 while ($true) {
     Clear-Host
-    Write-Host "🔥 CAIXA-FERRAMENTAS v2.7" -ForegroundColor Magenta
+    Write-Host "🔥 CAIXA-FERRAMENTAS v2.8 - JSON" -ForegroundColor Magenta
+    
+    # LÊ menu.json ou fallback
+    try {
+        $menu = irm "$RepoUrl/menu.json" | ConvertFrom-Json
+    }
+    catch {
+        $menu = @{menu = @(
+            @{Id=1;Name="🔐 Ativação Office";Script="https://get.activated.win"}
+            @{Id=2;Name="🌐 Correção Rede";Script="net-fix.ps1"}
+            @{Id=3;Name="🌐 Rede Ultra";Script="net-ultra.ps1"}
+            @{Id=0;Name="❌ Sair"}
+        )}
+    }
+    
     Write-Host "═══════════════════════════════════════" -ForegroundColor Gray
-    Write-Host "  [1] 🔐 Ativação Office (MAS)" -ForegroundColor Green
-    Write-Host "  [2] 🌐 Correção Rede (net-fix)" -ForegroundColor Green
-    Write-Host "  [3] 🌐 Correção Rede Ultra (net-ultra)" -ForegroundColor Green
-    Write-Host "  [0] ❌ Sair" -ForegroundColor Red
+    foreach ($item in $menu.menu) {
+        $cor = if ($item.Id -eq 0) {"Red"} else {"Green"}
+        Write-Host "  [$($item.Id)] $($item.Name)" -ForegroundColor $cor
+    }
     Write-Host "═══════════════════════════════════════" -ForegroundColor Gray
     
-    $choice = Read-Host "`n👉 [1,2,3,0]"
+    $choice = Read-Host "`n👉 [$($menu.menu | ? Id -ne 0 | % Id | join ',')]"
     
-    if ($choice -eq "1") {
-        Clear-Host; Write-Host "🚀 ATIVAÇÃO OFFICE..." -ForegroundColor Yellow
-        irm https://get.activated.win | iex
-    }
-    elseif ($choice -eq "2") {
-        Clear-Host; Write-Host "🚀 CORREÇÃO REDE..." -ForegroundColor Yellow
-        try { irm "$RepoUrl/net-fix.ps1" | iex }
-        catch { Write-Host "❌ net-fix.ps1 não encontrado!" -ForegroundColor Red }
-    }
-    elseif ($choice -eq "3") {                    ← ✅ CORRIGIDO!
+    $selected = $menu.menu | ? Id -eq [int]$choice
+    if ($selected -and $selected.Id -ne 0) {
         Clear-Host
-        Write-Host "🚀 CORREÇÃO REDE ULTRA..." -ForegroundColor Yellow
-        try { 
-            irm "$RepoUrl/net-ultra.ps1" | iex    ← ✅ net-ultra.ps1!
+        Write-Host "🚀 $($selected.Name)..." -ForegroundColor Yellow
+        try {
+            if ($selected.Script -match '^http') { irm $selected.Script | iex }
+            else { irm "$RepoUrl/$($selected.Script)" | iex }
         }
-        catch { 
-            Write-Host "❌ net-ultra.ps1 não encontrado!" -ForegroundColor Red 
-        }
+        catch { Write-Host "❌ $($selected.Script) falhou!" -ForegroundColor Red }
     }
-    elseif ($choice -eq "0") {
-        Write-Host "`n👋 Até logo! (cf)" -ForegroundColor Cyan; break
-    }
-    else {
-        Write-Host "`n❌ Digite 1, 2, 3 ou 0!" -ForegroundColor Red
-        Start-Sleep 1
-    }
+    elseif ($choice -eq "0") { break }
+    else { Write-Host "❌ Inválido!" -ForegroundColor Red; Start-Sleep 1 }
     
-    if ($choice -in "123") {
-        Write-Host "`n✅ ENTER para MENU..." -ForegroundColor Green
-        Read-Host | Out-Null
-    }
+    Write-Host "`n✅ ENTER para menu..." -ForegroundColor Green
+    Read-Host | Out-Null
 }
 
-Write-Host "`n💡 'cf' abre caixa sempre!" -ForegroundColor Cyan
+Write-Host "💡 cf = sempre!" -ForegroundColor Cyan
