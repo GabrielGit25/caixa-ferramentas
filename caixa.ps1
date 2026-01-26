@@ -1,4 +1,4 @@
-# caixa.ps1 v2.8.1 - SHazam 🔥 PS5.1 + JSON
+# caixa.ps1 v2.8.2 - SHazam 🔥 PS5.1 + JSON SEM JOIN
 $RepoUrl = "https://raw.githubusercontent.com/GabrielGit25/caixa-ferramentas/main"
 
 # AUTO-INSTALAÇÃO
@@ -8,22 +8,24 @@ function caixa { irm "$RepoUrl/caixa.ps1" | iex }
 Set-Alias cf caixa
 "@
 if (!(Select-String -Path $PROFILE -Pattern "caixa-ferramentas/main/caixa.ps1")) {
-    Add-Content -Path $PROFILE -Value $aliasCode -Encoding UTF8; . $PROFILE
+    Add-Content -Path $PROFILE -Value $aliasCode -Encoding UTF8
+    . $PROFILE
+    Write-Host "✅ cf instalado!" -ForegroundColor Green
 }
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 while ($true) {
     Clear-Host
-    Write-Host "🔥 CAIXA-FERRAMENTAS v2.8.1 - Lê menu.json" -ForegroundColor Magenta
+    Write-Host "🔥 CAIXA-FERRAMENTAS v2.8.2 - JSON PS5.1" -ForegroundColor Magenta
     
-    # LÊ menu.json (com fallback PS5.1)
+    # LÊ menu.json (fallback PS5.1)
     try {
-        $json = irm "$RepoUrl/menu.json"
-        $menu = $json | ConvertFrom-Json
+        $menu = irm "$RepoUrl/menu.json" | ConvertFrom-Json
+        Write-Host "✅ menu.json carregado!" -ForegroundColor Green
     }
     catch {
-        Write-Host "⚠️ menu.json indisponível - menu fixo" -ForegroundColor Yellow
+        Write-Host "⚠️ menu.json indisponível - usando fixo" -ForegroundColor Yellow
         $menu = @{menu = @(
             @{Id=1;Name="🔐 Ativação Office";Script="https://get.activated.win"}
             @{Id=2;Name="🌐 Correção Rede";Script="net-fix.ps1"}
@@ -39,17 +41,20 @@ while ($true) {
     }
     Write-Host "═══════════════════════════════════════" -ForegroundColor Gray
     
-    # PS5.1 COMPATÍVEL - sem 'join'
-    $opcoes = ($menu.menu | ? {$_.Id -ne 0} | % {$_.Id}) -join ','
-    $choice = Read-Host "`n👉 [$opcoes]"
+    # PS5.1 SEM JOIN - fixo simples
+    $choice = Read-Host "`n👉 Digite [1,2,3,0]"
     
     $selected = $menu.menu | ? Id -eq [int]$choice
     if ($selected -and $selected.Id -ne 0) {
         Clear-Host
         Write-Host "🚀 $($selected.Name)..." -ForegroundColor Yellow
         try {
-            if ($selected.Script -match '^http') { irm $selected.Script | iex }
-            else { irm "$RepoUrl/$($selected.Script)" | iex }
+            if ($selected.Script -match '^http') { 
+                irm $selected.Script | iex 
+            }
+            else { 
+                irm "$RepoUrl/$($selected.Script)" | iex 
+            }
         }
         catch { 
             Write-Host "❌ $($selected.Script) falhou!" -ForegroundColor Red 
@@ -60,7 +65,7 @@ while ($true) {
         break 
     }
     else { 
-        Write-Host "❌ Opção inválida!" -ForegroundColor Red
+        Write-Host "❌ Opção inválida! Use 1,2,3,0" -ForegroundColor Red
         Start-Sleep 1 
     }
     
@@ -68,4 +73,4 @@ while ($true) {
     Read-Host | Out-Null
 }
 
-Write-Host "💡 cf funciona sempre!" -ForegroundColor Cyan
+Write-Host "💡 cf = sempre pronto!" -ForegroundColor Cyan
