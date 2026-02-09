@@ -25,7 +25,7 @@ if (!(sls $PROFILE "caixa-ferramentas/main/caixa.ps1")) {
     Write-Host "  [1] 🔐 Ativação Office (MAS)" -F Green
     Write-Host "  [2] 🌐 Correção Rede (net-fix)" -F Green
     Write-Host "  [3] 🌐 Rede Ultra (net-ultra)" -F Green
-    Write-Host "  [4] 🆕 Instalar Aplicativos do Pacote Office" -F Green   
+    Write-Host "  [4] 🪟 Instalar Aplicativos do Pacote Office" -F Green   
     Write-Host "  [0] ❌ Sair" -F Red
     Write-Host "═" * 50 -F Gray
     
