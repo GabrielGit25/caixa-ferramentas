@@ -23,13 +23,12 @@ if (!(sls $PROFILE "caixa-ferramentas/main/caixa.ps1")) {
     Write-Host "🔥 CAIXA-FERRAMENTAS v3.0 - TI PRO" -F Magenta
     Write-Host "═" * 50 -F Gray
     Write-Host "  [1] 🔐 Ativação Office (MAS)" -F Green
-    Write-Host "  [2] 🌐 Correção Rede (net-fix)" -F Green
-    Write-Host "  [3] 🌐 Rede Ultra (net-ultra)" -F Green
-    Write-Host "  [4] 🪟 Instalar Aplicativos do Pacote Office" -F Green   
+    Write-Host "  [2] 🌐 Correção de Rede (net-ultra)" -F Green
+    Write-Host "  [3] 🪟 Instalar Aplicativos do Pacote Office" -F Green   
     Write-Host "  [0] ❌ Sair" -F Red
     Write-Host "═" * 50 -F Gray
     
-    $choice = Read-Host "`n👉 Digite 1, 2, 3, 4, ou 0"
+    $choice = Read-Host "`n👉 Digite 1, 2, 3, ou 0"
     
     switch ($choice) {
         1 {
@@ -40,14 +39,9 @@ if (!(sls $PROFILE "caixa-ferramentas/main/caixa.ps1")) {
         2 {
             cls
             Write-Host "🚀 CORREÇÃO REDE..." -F Yellow
-            irm "$RepoUrl/net-fix.ps1" | iex
-        }
-        3 {
-            cls
-            Write-Host "🚀 REDE ULTRA..." -F Yellow
             irm "$RepoUrl/net-ultra.ps1" | iex
         }
-       4 {                                  
+        3 {                                  
         cls
         Write-Host "🚀 INSTALAR APLICATIVOS DO PACOTE OFFICE" -F Yellow
         irm "$RepoUrl/OfficeSetup.ps1" | iex
@@ -57,7 +51,7 @@ if (!(sls $PROFILE "caixa-ferramentas/main/caixa.ps1")) {
             break menu
         }
         default {
-            Write-Host "`n❌ APENAS 1, 2, 3 4, ou 0!" -F Red
+            Write-Host "`n❌ APENAS 1, 2, 3, ou 0!" -F Red
             Start-Sleep 2
             continue menu
         }
