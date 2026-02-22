@@ -8,12 +8,12 @@
     {
       "Id": 2,
       "Name": "🌐 Correção Rede",
-      "Script": "net-fix.ps1"
+      "Script": "net-ultra.ps1"
     },
     {
       "Id": 3,
-      "Name": "🌐 Correção Rede Ultra",
-      "Script": "net-ultra.ps1"
+      "Name": "🪟 Instalar Aplicativos do Pacote Office",
+      "Script": "OfficeSetup.ps1"
     },
     {
       "Id": 0,
