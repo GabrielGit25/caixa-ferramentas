@@ -16,6 +16,11 @@
       "Script": "OfficeSetup.ps1"
     },
     {
+      "Id": 4,
+      "Name": "🛠️ Reparar Corrupção do Sistema",
+      "Script": "sfc-dism.ps1"
+    },
+    {
       "Id": 0,
       "Name": "❌ Sair"
     }
