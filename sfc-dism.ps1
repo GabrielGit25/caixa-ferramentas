@@ -1,13 +1,13 @@
-# sfc-dism.ps1 v1.1 - SHazam 🔥 Reparo Sistema Windows (Versão Refatorada)
-# MODIFICADO: Adicionada verificação de administrador no início.
+# sfc-dism.ps1 v1.2 - SHazam 🔥 Reparo Sistema Windows (Versão Refatorada)
+# v1.2: verificação de admin, log completo e códigos de reinício aceitos.
 
 # Verifica se o script está sendo executado como Administrador
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Host "❌ Este script precisa ser executado como Administrador." -ForegroundColor Red
-    Write-Host "   Clique com o botão direito no script e selecione 'Executar como Administrador'." -ForegroundColor Yellow
-    # Pausa para o usuário ler a mensagem antes de fechar
+    Write-Host "   Abra o PowerShell como Administrador e rode novamente: cf -> opção 4." -ForegroundColor Yellow
+    Write-Host "   Ou clique com o botão direito no script e selecione 'Executar como Administrador'." -ForegroundColor Gray
     Read-Host "Pressione ENTER para sair"
-    exit
+    return
 }
 
  $LogPath = "$env:USERPROFILE\AppData\Local\sfc-dism.log"
@@ -21,8 +21,8 @@ function Write-Log {
 }
 
 Clear-Host
-Write-Host "🔥 SFC-DISM v1.1 - Reparo Corrupção Sistema" -ForegroundColor Magenta
-Write-Log "🚀 sfc-dism v1.1 iniciado"
+Write-Host "🔥 SFC-DISM v1.2 - Reparo Corrupção Sistema" -ForegroundColor Magenta
+Write-Log "🚀 sfc-dism v1.2 iniciado"
 
 # 1. DISM /Online /Cleanup-Image /RestoreHealth (10-30min)
 Write-Host "`n🔧 PASSO 1/2: DISM RestoreHealth (10-30min)..." -ForegroundColor Cyan
@@ -32,12 +32,11 @@ Write-Host "⏳ Aguarde conclusão (pode demorar)..." -ForegroundColor Yellow
  $dismResult = DISM /Online /Cleanup-Image /RestoreHealth 2>&1
  $dismExit = $LASTEXITCODE
 
-# ADICIONADO: Log da saída completa do comando DISM
 Write-Log "--- SAÍDA DO COMANDO DISM ---"
-Write-Log $dismResult
+foreach ($line in $dismResult) { Write-Log $line }
 Write-Log "-----------------------------"
 
-Write-Host "`n📊 DISM concluído (Código: $dismExit)" -ForegroundColor $(if($dismExit -eq 0){'Green'}else{'Yellow'})
+Write-Host "`n📊 DISM concluído (Código: $dismExit)" -ForegroundColor $(if($dismExit -in 0, 3010){'Green'}else{'Yellow'})
 Write-Log "DISM concluído (Exit: $dismExit)"
 
 # 2. sfc /scannow (5-15min)
@@ -48,25 +47,32 @@ Write-Host "⏳ Escaneando arquivos sistema..." -ForegroundColor Yellow
  $sfcResult = sfc /scannow 2>&1
  $sfcExit = $LASTEXITCODE
 
-# ADICIONADO: Log da saída completa do comando SFC
 Write-Log "--- SAÍDA DO COMANDO SFC ---"
-Write-Log $sfcResult
+foreach ($line in $sfcResult) { Write-Log $line }
 Write-Log "----------------------------"
 
-Write-Host "`n📊 SFC concluído (Código: $sfcExit)" -ForegroundColor $(if($sfcExit -in 0,1){'Green'}else{'Yellow'})
+Write-Host "`n📊 SFC concluído (Código: $sfcExit)" -ForegroundColor $(if($sfcExit -in 0, 1, 2){'Green'}else{'Yellow'})
 Write-Log "SFC concluído (Exit: $sfcExit)"
 
-# RESULTADO
-# MODIFICADO: Lógica de verificação de sucesso aprimorada para o SFC (códigos 0 e 1 são sucesso).
-if ($dismExit -eq 0 -and $sfcExit -in 0, 1) {
+$dismOk = $dismExit -in 0, 3010
+$sfcOk = $sfcExit -in 0, 1, 2
+if ($dismOk -and $sfcOk) {
+    $dismStatus = switch ($dismExit) {
+        0 { "Concluído." }
+        3010 { "Concluído; reinício necessário." }
+    }
     $sfcStatus = switch ($sfcExit) {
         0 { "Nenhuma corrupção encontrada." }
         1 { "Corrupções encontradas e reparadas com sucesso." }
+        2 { "Reparo pendente; reinicie o PC para concluir." }
     }
+    $reboot = ($dismExit -eq 3010 -or $sfcExit -eq 2)
     Write-Host "`n🎯 ✅ REPARO CONCLUÍDO COM SUCESSO!" -ForegroundColor Green
+    Write-Host "   Status DISM: $dismStatus" -ForegroundColor Cyan
     Write-Host "   Status SFC: $sfcStatus" -ForegroundColor Cyan
-    Write-Host "   Reinicie o PC para garantir a aplicação de todas as mudanças." -ForegroundColor Yellow
-    Write-Log "🏁 ✅ Reparo 100% OK (DISM:$dismExit, SFC:$sfcExit)"
+    if ($reboot) { Write-Host "   Reinicie o PC agora para finalizar os reparos." -ForegroundColor Yellow }
+    else { Write-Host "   Reinicie o PC para garantir a aplicação de todas as mudanças." -ForegroundColor Yellow }
+    Write-Log "🏁 ✅ Reparo OK (DISM:$dismExit, SFC:$sfcExit)"
 } else {
     Write-Host "`n🎯 ⚠️  ERROS ENCONTRADOS DURANTE O REPARO." -ForegroundColor Red
     Write-Host "   Verifique o log para detalhes: $LogPath" -ForegroundColor Yellow
@@ -75,9 +81,9 @@ if ($dismExit -eq 0 -and $sfcExit -in 0, 1) {
 }
 
 Write-Host "`n📋 LOG completo salvo em: $LogPath" -ForegroundColor Cyan
-Write-Log "🏁 sfc-dism v1.1 concluído"
+Write-Log "🏁 sfc-dism v1.2 concluído"
 
 # PIPELINE SAFE
-if ($MyInvocation.InvocationName -eq 'irm' -or $MyInvocation.Line -match 'iex') { exit 0 }
+if ($MyInvocation.InvocationName -eq 'irm' -or $MyInvocation.Line -match 'iex') { return }
 Write-Host "`n🔥 ENTER para sair..." -ForegroundColor Magenta
 Read-Host | Out-Null
