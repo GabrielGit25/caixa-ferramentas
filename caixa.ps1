@@ -26,10 +26,11 @@ if (!(sls $PROFILE "caixa-ferramentas/main/caixa.ps1")) {
     Write-Host "  [2] 🌐 Correção de Rede (net-ultra)" -F Green
     Write-Host "  [3] 🪟 Instalar Aplicativos do Pacote Office" -F Green
     Write-Host "  [4] 🛠️ Reparar Corrupção do Sistema (DISM+SFC)" -F Green      # ← NOVA!
+    Write-Host "  [5] 🪟 Pular Login Microsoft (Conta Local - OOBE)" -F Green    # ← NOVA!
     Write-Host "  [0] ❌ Sair" -F Red
     Write-Host "═" * 55 -F Gray
     
-    $choice = Read-Host "`n👉 Digite 1, 2, 3, 4 ou 0"
+    $choice = Read-Host "`n👉 Digite 1, 2, 3, 4, 5 ou 0"
     
     switch ($choice) {
         1 {
@@ -53,12 +54,17 @@ if (!(sls $PROFILE "caixa-ferramentas/main/caixa.ps1")) {
             Write-Host "⚠️  Execute COMO ADMIN!" -F Red
             irm "$RepoUrl/sfc-dism.ps1" | iex
         }
+        5 {                                    # ← NOVA!
+            cls
+            Write-Host "🚀 PULAR LOGIN MICROSOFT (CONTA LOCAL)..." -F Yellow
+            irm "$RepoUrl/pular-login.ps1" | iex
+        }
         0 {
             Write-Host "`n👋 Até logo! cf = sempre aqui!" -F Cyan
             break menu
         }
         default {
-            Write-Host "`n❌ APENAS 1, 2, 3, 4 ou 0!" -F Red
+            Write-Host "`n❌ APENAS 1, 2, 3, 4, 5 ou 0!" -F Red
             Start-Sleep 2
             continue menu
         }

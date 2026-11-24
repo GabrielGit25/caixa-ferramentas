@@ -21,6 +21,11 @@
       "Script": "sfc-dism.ps1"
     },
     {
+      "Id": 5,
+      "Name": "🪟 Pular Login Microsoft (Conta Local - OOBE)",
+      "Script": "pular-login.ps1"
+    },
+    {
       "Id": 0,
       "Name": "❌ Sair"
     }
