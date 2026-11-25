@@ -64,7 +64,8 @@ if (-not (Select-String -LiteralPath $PROFILE -Pattern 'caixa-ferramentas/main/c
             cls
             Write-Host "🚀 RECUPERANDO ARQUIVOS DO PENDRIVE..." -F Yellow
             Write-Host "⚠️  Se pedir elevação, execute como ADMIN!" -F DarkYellow
-            irm "$RepoUrl/recuperar-pendrive.ps1" | iex
+            $txt = irm "$RepoUrl/recuperar-pendrive.ps1"
+            $txt.TrimStart([char]0xFEFF) | iex
         }
         0 {
             Write-Host "`n👋 Até logo! cf = sempre aqui!" -F Cyan
