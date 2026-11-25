@@ -26,6 +26,11 @@
       "Script": "pular-login.ps1"
     },
     {
+      "Id": 6,
+      "Name": "💾 Recuperar Arquivos de Pendrive",
+      "Script": "recuperar-pendrive.ps1"
+    },
+    {
       "Id": 0,
       "Name": "❌ Sair"
     }
